@@ -1,0 +1,57 @@
+<script type="text/javascript">
+  RED.nodes.registerType('nibe-input', {
+    category: 'input',
+    color: '#e32222',
+    defaults: {
+      server: { value: '', type: 'nibe-config' },
+      name: { value: '' },
+      add: { value: false }
+    },
+    inputs: 0,
+    outputs: 2,
+    outputLabels: ['bei Änderung', 'bei jedem Wert'],
+    icon: 'font-awesome/fa-thermometer-half',
+    label: function () {
+      return this.name || 'NIBE In';
+    }
+  });
+</script>
+
+<script type="text/html" data-template-name="nibe-input">
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Register</label>
+    <input type="text" id="node-input-name" placeholder="z. B. 40008, leer = alle, error = Fehler">
+  </div>
+  <div class="form-row">
+    <label for="node-input-add"><i class="fa fa-bookmark"></i> Register lesen</label>
+    <input type="checkbox" id="node-input-add" style="width:auto;vertical-align:top">
+    <span style="font-size:0.9em;color:#888"> zyklisch von der Pumpe abfragen</span>
+  </div>
+  <div class="form-row">
+    <label for="node-input-server"><i class="fa fa-plug"></i> Pumpe</label>
+    <input type="text" id="node-input-server">
+  </div>
+</script>
+
+<script type="text/html" data-help-name="nibe-input">
+  <p>Liefert Werte eines Registers der Wärmepumpe.</p>
+  <h3>Einstellungen</h3>
+  <dl class="message-properties">
+    <dt>Register</dt>
+    <dd>Registernummer, z. B. <code>40008</code>. Leer: alle Register. <code>error</code>: Fehlermeldungen.</dd>
+    <dt>Register lesen</dt>
+    <dd>Das Register wird zyklisch von der Pumpe abgefragt und landet in <code>global.register</code>. Register, die die
+      Pumpe von sich aus sendet (LOG.SET), werden nicht zusätzlich abgefragt. Auch bei nicht verdrahteten Ausgängen nötig.</dd>
+  </dl>
+  <h3>Ausgänge</h3>
+  <ol class="node-ports">
+    <li>nur bei Wertänderung</li>
+    <li>bei jedem Wert</li>
+  </ol>
+  <h3>Nachricht</h3>
+  <dl class="message-properties">
+    <dt>topic <span class="property-type">string</span></dt><dd>Registernummer</dd>
+    <dt>payload <span class="property-type">number | string</span></dt><dd>Wert (Faktor angewendet, ggf. Text aus der Wertzuordnung)</dd>
+    <dt>raw <span class="property-type">object</span></dt><dd>Registerobjekt mit <code>titel</code>, <code>unit</code>, <code>raw_data</code>, <code>timestamp</code></dd>
+  </dl>
+</script>

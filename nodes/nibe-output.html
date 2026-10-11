@@ -1,0 +1,48 @@
+<script type="text/javascript">
+  RED.nodes.registerType('nibe-output', {
+    category: 'output',
+    color: '#e32222',
+    defaults: {
+      server: { value: '', type: 'nibe-config' },
+      name: { value: '' }
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: 'font-awesome/fa-sliders',
+    label: function () {
+      return this.name || 'NIBE Out';
+    }
+  });
+</script>
+
+<script type="text/html" data-template-name="nibe-output">
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Register</label>
+    <input type="text" id="node-input-name" placeholder="z. B. 47044, leer = msg.topic">
+  </div>
+  <div class="form-row">
+    <label for="node-input-server"><i class="fa fa-plug"></i> Pumpe</label>
+    <input type="text" id="node-input-server">
+  </div>
+</script>
+
+<script type="text/html" data-help-name="nibe-output">
+  <p>Schreibt einen Wert in ein Register der Wärmepumpe.</p>
+  <h3>Eingang</h3>
+  <dl class="message-properties">
+    <dt>payload <span class="property-type">number</span></dt>
+    <dd>Wert in Anzeigeeinheiten, z. B. <code>37</code> für 37,0 °C (der Faktor des Registers wird angewendet).</dd>
+    <dt class="optional">topic <span class="property-type">string</span></dt>
+    <dd>Registernummer, falls im Node keine eingetragen ist.</dd>
+  </dl>
+  <h3>Ausgang</h3>
+  <p>Eine Nachricht <code>{topic, payload}</code>, sobald der Wert zur Pumpe gesendet wurde.</p>
+  <h3>Hinweise</h3>
+  <ul>
+    <li>Ungültige Werte (keine Zahl, außerhalb des erlaubten Bereichs, Register nur lesbar) werden abgelehnt und als
+      Fehler gemeldet. Es wird nichts gesendet.</li>
+    <li>Schreibbefehle gehen erst raus, wenn die Pumpe das Schreib-Token schickt (etwa im Sekundentakt).
+      Ein Befehl, der 30 Sekunden nicht abgeholt wurde, verfällt.</li>
+    <li>Mehrere Werte kurz hintereinander für dasselbe Register: nur der neueste wird gesendet.</li>
+  </ul>
+</script>

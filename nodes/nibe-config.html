@@ -1,0 +1,121 @@
+<script type="text/javascript">
+  RED.nodes.registerType('nibe-config', {
+    category: 'config',
+    defaults: {
+      name: { value: '' },
+      serial_port: { value: '/dev/ttyAMA0', required: true },
+      model: { value: 'F1255' },
+      readonly: { value: false },
+      reset_alarm: { value: true },
+      trace: { value: false },
+      trace_file: { value: '/tmp/nibepi-lite.log' }
+    },
+    label: function () {
+      return this.name || 'NIBE ' + (this.model || 'F1255') + ' @ ' + (this.serial_port || '?');
+    },
+    oneditprepare: function () {
+      var node = this;
+      // Knoten aus älteren Flows (NibePi 1.2.1) kennen diese Felder noch nicht
+      if (node.reset_alarm === undefined) $('#node-config-input-reset_alarm').prop('checked', true);
+      if (!node.model) node.model = 'F1255';
+
+      function setPorts(ports) {
+        var list = $('#nibe-ports').empty();
+        ports.forEach(function (p) {
+          $('<option>').attr('value', p.path).text(p.label).appendTo(list);
+        });
+      }
+      function setModels(models) {
+        var sel = $('#node-config-input-model').empty();
+        (models.length ? models : ['F1255']).forEach(function (m) {
+          $('<option>').attr('value', m).text(m).appendTo(sel);
+        });
+        sel.val(node.model);
+      }
+      setModels([node.model]);
+      $('#nibe-ports-btn').on('click', function () {
+        var btn = $(this).prop('disabled', true);
+        $.getJSON('nibepi-lite/options')
+          .done(function (r) {
+            setPorts(r.ports || []);
+            setModels(r.models || []);
+            $('#nibe-ports-info').text((r.ports || []).length + ' Port(s) gefunden');
+          })
+          .fail(function () {
+            $('#nibe-ports-info').text('Abfrage fehlgeschlagen');
+          })
+          .always(function () {
+            btn.prop('disabled', false);
+          });
+      });
+      $('#nibe-ports-btn').trigger('click');
+
+      function toggleTrace() {
+        $('#nibe-trace-row').toggle($('#node-config-input-trace').is(':checked'));
+      }
+      $('#node-config-input-trace').on('change', toggleTrace);
+      toggleTrace();
+    }
+  });
+</script>
+
+<script type="text/html" data-template-name="nibe-config">
+  <div class="form-row">
+    <label for="node-config-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-config-input-name" placeholder="optional">
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-serial_port"><i class="fa fa-plug"></i> Serieller Port</label>
+    <input type="text" id="node-config-input-serial_port" list="nibe-ports" style="width:55%" placeholder="/dev/ttyAMA0">
+    <datalist id="nibe-ports"></datalist>
+    <button type="button" class="red-ui-button" id="nibe-ports-btn" title="Ports suchen"><i class="fa fa-refresh"></i></button>
+  </div>
+  <div class="form-row">
+    <label>&nbsp;</label>
+    <span id="nibe-ports-info" style="font-size:0.9em;color:#888"></span>
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-model"><i class="fa fa-cube"></i> Modell</label>
+    <select id="node-config-input-model" style="width:55%"></select>
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-readonly"><i class="fa fa-lock"></i> Nur lesen</label>
+    <input type="checkbox" id="node-config-input-readonly" style="width:auto;vertical-align:top">
+    <span style="font-size:0.9em;color:#888"> nichts zur Pumpe schreiben</span>
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-reset_alarm"><i class="fa fa-bell-slash"></i> Alarm quittieren</label>
+    <input type="checkbox" id="node-config-input-reset_alarm" style="width:auto;vertical-align:top">
+    <span style="font-size:0.9em;color:#888"> beim Start (wie NibePi 1.2.1)</span>
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-trace"><i class="fa fa-file-text-o"></i> Mitschnitt</label>
+    <input type="checkbox" id="node-config-input-trace" style="width:auto;vertical-align:top">
+    <span style="font-size:0.9em;color:#888"> Telegramme in Datei (nur zur Fehlersuche)</span>
+  </div>
+  <div class="form-row" id="nibe-trace-row">
+    <label for="node-config-input-trace_file"><i class="fa fa-file-o"></i> Datei</label>
+    <input type="text" id="node-config-input-trace_file" placeholder="/tmp/nibepi-lite.log">
+  </div>
+</script>
+
+<script type="text/html" data-help-name="nibe-config">
+  <p>Verbindung zur NIBE-Wärmepumpe (F-Serie) über RS485 und die Registerliste des gewählten Modells.</p>
+  <h3>Einstellungen</h3>
+  <dl class="message-properties">
+    <dt>Serieller Port</dt>
+    <dd>Pi-UART (<code>/dev/ttyAMA0</code>) oder USB-RS485-Adapter. Für USB den festen Pfad unter
+      <code>/dev/serial/by-id/…</code> nehmen, damit er nach einem Neustart nicht wandert. 9600 Baud, 8N1.</dd>
+    <dt>Nur lesen</dt>
+    <dd>Es wird nichts zur Pumpe geschrieben, auch nichts beim Start.</dd>
+    <dt>Alarm quittieren</dt>
+    <dd>Wie NibePi 1.2.1: beim Start und bei Alarm 251 (Kommunikationsstörung) wird der Alarm zurückgesetzt.
+      Bei abgeschaltetem Haken bleiben echte Alarme der Pumpe stehen.</dd>
+    <dt>Mitschnitt</dt>
+    <dd>Schreibt Telegramme (<code>RAW</code>, <code>OK</code>, <code>SENT</code>, <code>TX</code>, <code>TXDONE</code>) in eine Datei, höchstens 20 MB.
+      Nur zur Fehlersuche einschalten.</dd>
+  </dl>
+  <h3>Global</h3>
+  <p><code>global.register</code> enthält wie bisher das Array aller Register mit
+    <code>register</code>, <code>data</code>, <code>raw_data</code>, <code>titel</code>, <code>unit</code>, <code>timestamp</code>.</p>
+</script>
