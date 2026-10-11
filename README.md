@@ -145,15 +145,15 @@ npm audit       # 0 Schwachstellen
 Die Modelldateien (`models/*.json`) stammen aus NibePi 1.2.1.
 
 * `F1255.json`: gegenüber NibePi 1.2.1 um zwei Register ergänzt (40047, 42406). Geprüft an einer F1255-6.
-* `F1155.json`: unverändert aus NibePi 1.2.1. Alle Registerdefinitionen sind identisch zu denen der F1255 (außer den
-  beiden Ergänzungen oben). Mit einer F1155 selbst ist das Paket **nicht geprüft**.
+* `F1155.json`: dieselbe Registerliste wie `F1255.json`. In NibePi 1.2.1 sind die Definitionen beider Modelle identisch,
+  die beiden Ergänzungen oben sind hier ebenfalls eingetragen. Mit einer F1155 selbst ist das Paket **nicht geprüft**.
 
 Weitere Modelle ließen sich als Datei ergänzen, sind aber hier **nicht geprüft**.
 
 ## Entstehung
 
 Der Code ist gemeinsam mit **Claude** (KI-Assistent von Anthropic) entstanden und von [@Becker884](https://github.com/Becker884)
-an einer NIBE F1255-6 (Raspberry Pi 3, Joy-it RB-RS485) in Betrieb genommen worden. Claude hat das Protokoll anhand des
+an seiner NIBE F1255-6 (Raspberry Pi 3, Joy-it RB-RS485) in Betrieb genommen worden. Claude hat das Protokoll anhand des
 NibePi-Quelltexts und eines Mitschnitts nachgebaut, die Tests geschrieben und den Node.js-26-Fehler eingegrenzt.
 Geprüft an der echten Pumpe wurde nur von Becker884: Lesen (LOG.SET und aktive Abfrage) und Schreiben laufen.
 Die Grundlage, das Protokoll-Wissen und die Registerlisten stammen aus
