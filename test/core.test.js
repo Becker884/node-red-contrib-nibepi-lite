@@ -266,6 +266,24 @@ test('abweichendes Pumpenmodell wird gemeldet', async () => {
   s.core.stop();
 });
 
+test('Modell F1155 konfiguriert und Pumpe meldet F1155: keine Warnung', async () => {
+  const s = setup({ blockWrites: true, model: 'F1155' });
+  const faults = [];
+  const announced = [];
+  s.core.on('fault', (f) => faults.push(f));
+  s.core.on('announce', (a) => announced.push(a));
+  await s.open();
+  s.feed(pumpFrame(0x6d, [0x01, 0x24, 0xe3, ...Buffer.from('F1155-6 E PC EM')]));
+  assert.deepEqual(announced, [{ model: 'F1155', firmware: 9443 }]);
+  assert.equal(faults.length, 0);
+  // LOG.SET-Wert wird mit der F1155-Liste dekodiert
+  const got = [];
+  s.core.on('40008', (i) => got.push(i.data));
+  s.feed(logSet([[40008, 250]]));
+  assert.deepEqual(got, [25]);
+  s.core.stop();
+});
+
 test('Verbindungsausfall: link=false und Fehlermeldung, danach link=true', async () => {
   const s = setup({ blockWrites: true, linkTimeoutMs: 15000 });
   const links = [];

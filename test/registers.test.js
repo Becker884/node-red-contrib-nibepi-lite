@@ -86,3 +86,21 @@ test('Modellname wird geprüft (kein Pfad-Trick, unbekanntes Modell)', () => {
   assert.throws(() => regs.loadModel('../etc/passwd'));
   assert.throws(() => regs.loadModel('F9999'));
 });
+
+test('alle mitgelieferten Modelle sind ladbar, vollständig und ohne doppelte Register', () => {
+  const fs = require('fs');
+  const path = require('path');
+  const dir = path.join(__dirname, '..', 'models');
+  const files = fs.readdirSync(dir).filter((f) => f.endsWith('.json'));
+  assert.ok(files.includes('F1255.json') && files.includes('F1155.json'));
+  for (const f of files) {
+    const list = regs.loadModel(f.replace(/\.json$/, ''));
+    assert.ok(list.length > 900, `${f}: zu wenige Register`);
+    const seen = new Set();
+    for (const r of list) {
+      for (const k of ['register', 'factor', 'size', 'mode', 'titel']) assert.ok(r[k] !== undefined, `${f}: ${r.register} ohne ${k}`);
+      assert.ok(!seen.has(r.register), `${f}: doppeltes Register ${r.register}`);
+      seen.add(r.register);
+    }
+  }
+});

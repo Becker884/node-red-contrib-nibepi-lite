@@ -56,7 +56,7 @@ Das habe ich mit einem echten Node-RED nicht nachstellen können.
 | Feld | Bedeutung |
 |---|---|
 | Serieller Port | `/dev/ttyAMA0`, `/dev/serial0` oder `/dev/serial/by-id/…`. Die Liste füllt sich über den Aktualisieren-Knopf. |
-| Modell | Datei aus `models/` (mitgeliefert: `F1255`). Die Pumpe meldet ihr Modell selbst; bei Abweichung gibt es eine Warnung. |
+| Modell | Datei aus `models/` (mitgeliefert: `F1255` und `F1155`). Die Pumpe meldet ihr Modell selbst; bei Abweichung gibt es eine Warnung im Log, die Verbindung läuft trotzdem weiter. |
 | Nur lesen | Es wird nichts zur Pumpe geschrieben, auch keine Startsequenz. |
 | Alarm quittieren | Wie bisher: beim Start sowie bei Alarm 251 (Kommunikationsstörung) wird der Alarm zurückgesetzt. **Das quittiert auch echte Alarme.** Zum Beobachten ausschalten. |
 | Mitschnitt | Schreibt Telegramme in eine Datei (höchstens 20 MB) – nur zur Fehlersuche. |
@@ -138,12 +138,17 @@ Antwortzeiten. Unten steht, ob die Pumpe antwortet.
 
 ```bash
 npm install
-npm test        # 49 Tests: Telegramme, Register, Kern, Replay des Mitschnitts
+npm test        # 51 Tests: Telegramme, Register, Kern, Replay des Mitschnitts
 npm audit       # 0 Schwachstellen
 ```
 
-Die Modelldateien (`models/*.json`) stammen aus NibePi 1.2.1. Weitere Modelle ließen sich als Datei ergänzen,
-sind aber hier **nicht geprüft**.
+Die Modelldateien (`models/*.json`) stammen aus NibePi 1.2.1.
+
+* `F1255.json`: gegenüber NibePi 1.2.1 um zwei Register ergänzt (40047, 42406). Geprüft an einer F1255-6.
+* `F1155.json`: unverändert aus NibePi 1.2.1. Alle Registerdefinitionen sind identisch zu denen der F1255 (außer den
+  beiden Ergänzungen oben). Mit einer F1155 selbst ist das Paket **nicht geprüft**.
+
+Weitere Modelle ließen sich als Datei ergänzen, sind aber hier **nicht geprüft**.
 
 ## Entstehung
 
