@@ -3,6 +3,14 @@
   "version": "0.1.3",
   "description": "Minimale Node-RED-Nodes für NIBE F-Serie (F1255) über RS485: Register lesen/schreiben inkl. LOG.SET. Abgeleitet aus node-red-contrib-nibepi 1.2.1.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Becker884/node-red-contrib-nibepi-lite.git"
+  },
+  "homepage": "https://github.com/Becker884/node-red-contrib-nibepi-lite#readme",
+  "bugs": {
+    "url": "https://github.com/Becker884/node-red-contrib-nibepi-lite/issues"
+  },
   "author": "node-red-contrib-nibepi-lite contributors",
   "keywords": [
     "node-red",

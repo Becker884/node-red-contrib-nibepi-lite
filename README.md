@@ -33,9 +33,13 @@ Altes Paket zuerst entfernen (beide dürfen nicht gleichzeitig geladen sein, die
 ```bash
 cd ~/.node-red
 npm uninstall node-red-contrib-nibepi        # bzw. das Fork-Paket
-npm install /pfad/zu/node-red-contrib-nibepi-lite-0.1.3.tgz
+npm install github:Becker884/node-red-contrib-nibepi-lite
 node-red-restart                              # oder: Node-RED neu starten
 ```
+
+Eine bestimmte Version (sobald es auf GitHub einen Release mit diesem Tag gibt):
+`npm install github:Becker884/node-red-contrib-nibepi-lite#v0.1.3`. Alternativ aus einer Paketdatei:
+`npm install /pfad/zu/node-red-contrib-nibepi-lite-0.1.3.tgz`.
 
 Danach Port, Modell und „Nur lesen“ im `nibe-config`-Node prüfen. Bestehende Flows mit den Node-Typen
 `nibe-config`, `nibe-input` und `nibe-output` laden unverändert. Die Felder `serial_port`, `readonly`,
@@ -140,6 +144,15 @@ npm audit       # 0 Schwachstellen
 
 Die Modelldateien (`models/*.json`) stammen aus NibePi 1.2.1. Weitere Modelle ließen sich als Datei ergänzen,
 sind aber hier **nicht geprüft**.
+
+## Entstehung
+
+Der Code ist gemeinsam mit **Claude** (KI-Assistent von Anthropic) entstanden und von [@Becker884](https://github.com/Becker884)
+an einer NIBE F1255-6 (Raspberry Pi 3, Joy-it RB-RS485) in Betrieb genommen worden. Claude hat das Protokoll anhand des
+NibePi-Quelltexts und eines Mitschnitts nachgebaut, die Tests geschrieben und den Node.js-26-Fehler eingegrenzt.
+Geprüft an der echten Pumpe wurde nur von Becker884: Lesen (LOG.SET und aktive Abfrage) und Schreiben laufen.
+Die Grundlage, das Protokoll-Wissen und die Registerlisten stammen aus
+[node-red-contrib-nibepi](https://github.com/anerdins/node-red-contrib-nibepi) von anerdins.
 
 ## Lizenz
 
