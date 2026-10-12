@@ -120,8 +120,9 @@ Bindings), startet er ab Node 26 ersatzweise einen leeren 5-ms-Timer.
 Hidden-Eigenschaft `wake_ms` am `nibe-config`-Node (nur zur Fehlersuche): `> 0` erzwingt den Timer mit diesem
 Intervall in ms, `0` schaltet den Timer ganz ab.
 
-Stand: Die Timer-Variante (0.1.2) ist auf einer Pi 3 mit Node 26.11.1 bestätigt. Die `setImmediate`-Variante
-(ab 0.1.3) ist im Test mit simulierter Pumpe unter Node 20 bis 26 geprüft und auf der Pi noch zu bestätigen.
+Stand: Sowohl die Timer-Variante (0.1.2) als auch die `setImmediate`-Variante (ab 0.1.3) sind auf einer Pi 3 mit
+Node 26.11.1 bestätigt; 0.1.3 läuft dort einwandfrei. Zusätzlich ist die `setImmediate`-Variante im Test mit simulierter
+Pumpe unter Node 20 bis 26 geprüft.
 
 ## Kommunikationstest ohne Node-RED
 
